@@ -8,3 +8,5 @@ next-env.d.ts
 npm-debug.log*
 .DS_Store
 /_tmp
+
+.vercel
