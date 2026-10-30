@@ -13,7 +13,7 @@ import { toCustomerView } from "@/lib/logic/customerView";
 import { UxRestrictions } from "@/lib/pleos/carProperty";
 import { MAX_ACTION_CALLS, type AppSchema } from "@/lib/pleos/gleo";
 import { MAX_WAYPOINTS } from "@/lib/pleos/naviHelper";
-import schema from "@/data/gleo-app-schema.json";
+import { APP_SCHEMA as schema } from "@/lib/pleos/appSchema";
 import { initialJobs } from "@/lib/engine/engine";
 import { blankSession } from "@/lib/engine/server";
 
@@ -188,7 +188,7 @@ describe("음성 의도 · Gleo App Schema", () => {
     expect(matchVoiceIntent("늦는다고 알려 줘")).toBe("NOTIFY_DELAY");
   });
   it("앱의 App Schema는 규칙 통과 (actionCalls ≤ 3, 대문자_밑줄, 영어 description)", () => {
-    expect(validateAppSchema(schema as AppSchema)).toEqual([]);
+    expect(validateAppSchema(schema)).toEqual([]);
     expect(schema.actionCalls.length).toBeLessThanOrEqual(MAX_ACTION_CALLS);
   });
   it("함수 4개·소문자 이름·한국어 설명은 걸러낸다", () => {
