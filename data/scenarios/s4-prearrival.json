@@ -1,0 +1,103 @@
+{
+  "id": "S4",
+  "short": "④ 10분 전 확인·주차장",
+  "title": "④ 도착 10분 전 「집에 계세요?」 + 지하주차장 입구로 목적지 교체",
+  "summary": "남은 시간이 10분 이하가 되면 서버가 고객에게 먼저 묻고, 고객이 방문 차량 등록과 주차장 입구를 알려 주면 음성 한마디로 내비 목적지를 입구로 바꿉니다. PV5 전고 1,905mm라 2.1m 지하주차장에 들어갈 수 있다는 안내도 함께.",
+  "setup": [
+    { "type": "admin.clock", "hhmm": "08:58" },
+    { "type": "admin.jobDone", "jobId": "J1", "arrived": "08:58", "started": "09:02", "departed": "10:30" },
+    { "type": "admin.jobDone", "jobId": "J3", "arrived": "10:59", "started": "11:00", "departed": "11:48" },
+    { "type": "admin.promised", "jobId": "J2", "hhmm": "12:00" },
+    { "type": "admin.onSite", "jobId": "J2", "arrived": "12:08", "started": "12:10" },
+    { "type": "admin.clock", "hhmm": "13:03" },
+    { "type": "sim.gear", "gear": "D" },
+    { "type": "sim.speed", "kmh": 50 },
+    { "type": "clock.advanceTo", "hhmm": "13:06" }
+  ],
+  "steps": [
+    {
+      "t": 0,
+      "hold": 4500,
+      "actions": [],
+      "caption": {
+        "title": "정○○ 고객(푸른숲 아파트 [가상])에게 가는 중 (13:06)",
+        "signal": "기어 D · 50km/h · 남은 약 9km",
+        "decision": "남은 시간 > 10분 → 아직 묻지 않음",
+        "driver": "「다음 정○○ · 도착 13:30」",
+        "companion": "정○○: 「기사님이 출발했어요」"
+      }
+    },
+    {
+      "t": 20,
+      "hold": 5500,
+      "actions": [{ "type": "navi.remainKm", "km": 3 }],
+      "caption": {
+        "title": "남은 3km — 도착 약 7분 전",
+        "signal": "onDestinationInfo remainDistance 3.0km · remainTime 7분",
+        "decision": "shouldPreArrivalCheck: 10분(또는 3km) 이하 → 서버가 「집에 계세요?」 발송",
+        "driver": "칩 「도착 전 확인 보냄」 — 운전자는 할 일 없음",
+        "companion": "정○○: 「약 7분 뒤 도착해요. 지금 집에 계세요?」 + 주차 안내 (차 높이 1.9m → 2.1m 지하주차장 가능)"
+      }
+    },
+    {
+      "t": 35,
+      "hold": 4000,
+      "actions": [{ "type": "customer.reply", "jobId": "J4", "reply": "HOME_YES" }],
+      "caption": {
+        "title": "정○○ 고객 「집에 있어요」",
+        "signal": "서버 → 차량 앱 푸시",
+        "decision": "헛걸음 위험 없음 → 그대로 진행",
+        "driver": "음성 「정○○ 고객님 집에 계신대요」 · 「계심 ✓」",
+        "companion": "주차 안내 카드가 열려 있음"
+      }
+    },
+    {
+      "t": 50,
+      "hold": 6000,
+      "actions": [{ "type": "customer.parking", "jobId": "J4", "registered": true, "entranceId": "J4_PB" }],
+      "caption": {
+        "title": "고객이 「방문 차량 등록 완료」 + 「B동 지하 2층 입구」를 골라 보냄",
+        "signal": "서버 → 차량 앱 PARKING 푸시",
+        "decision": "canEnterUnderground: 1,905mm + 여유 100mm ≤ 2,100mm → 진입 가능 → 목적지 교체를 음성으로 물음",
+        "driver": "Gleo 「정○○ 고객님이 B동 지하 2층 입구를 알려 주셨어요. 이 차는 높이 1.9m라 들어갈 수 있어요. 목적지를 바꿀까요?」",
+        "companion": "정○○: 「보냈어요」 표시 (공동현관 번호는 받지 않음)"
+      }
+    },
+    {
+      "t": 55,
+      "hold": 5500,
+      "actions": [{ "type": "voice.yes" }],
+      "caption": {
+        "title": "「그래」 → CHANGE_TO_PARKING → 내비 목적지 교체",
+        "signal": "Gleo Intent action=CHANGE_TO_PARKING → NaviHelper.requestRoute(RouteInfo poiName=B동 지하주차장 입구)",
+        "decision": "onRoutingCompleted로 교체 확인 → Callback success",
+        "driver": "「계심 ✓ · B동 지하 2층 입구로 안내」",
+        "companion": "정○○: 「알려 주신 B동 지하 입구로 갈게요」"
+      }
+    },
+    {
+      "t": 80,
+      "hold": 3500,
+      "actions": [{ "type": "navi.arrive" }],
+      "caption": {
+        "title": "주차장 입구 도착",
+        "signal": "onDestinationArrived() · 차속 0",
+        "decision": "기어 P를 기다림",
+        "driver": "칩 「목적지 도착 — 기어 P에서 도착 알림」",
+        "companion": "변화 없음"
+      }
+    },
+    {
+      "t": 95,
+      "hold": 5000,
+      "actions": [{ "type": "sim.gear", "gear": "P" }],
+      "caption": {
+        "title": "기어 P — 지하주차장에 바로 주차, 도착 알림",
+        "signal": "GEAR_SELECTION = GEAR_PARK",
+        "decision": "도착 확정 → 서버 발송 (이중 주차·차단기 앞 전화 없음)",
+        "driver": "주차 화면: 「도착 알림 보냄 · 정○○ 고객님」",
+        "companion": "정○○: 「기사님이 B동 지하 입구에 도착했어요」"
+      }
+    }
+  ]
+}

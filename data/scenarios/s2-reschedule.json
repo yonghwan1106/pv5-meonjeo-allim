@@ -1,0 +1,78 @@
+{
+  "id": "S2",
+  "short": "② 1시간 뒤로 → 재배치",
+  "title": "② 고객이 「1시간 뒤로」 → 오늘 순서를 다시 짜고 목적지 교체",
+  "summary": "고객 답 하나로 서버가 남은 일정을 다시 짜고, 차량 앱은 내비 목적지를 다음 고객으로 바꾸며, 앞당겨진 고객에게는 자동으로 문의가 갑니다.",
+  "setup": [
+    { "type": "admin.clock", "hhmm": "08:58" },
+    { "type": "admin.onSite", "jobId": "J1", "arrived": "08:58", "started": "09:02" },
+    { "type": "admin.clock", "hhmm": "10:30" },
+    { "type": "sim.gear", "gear": "D" },
+    { "type": "sim.speed", "kmh": 45 },
+    { "type": "navi.congestion", "addMin": 20 },
+    { "type": "voice.yes" },
+    { "type": "clock.advanceTo", "hhmm": "10:40" }
+  ],
+  "steps": [
+    {
+      "t": 0,
+      "hold": 4500,
+      "actions": [],
+      "caption": {
+        "title": "김○○ 고객에게 「약 20분 늦어요」가 이미 간 상태 (10:40, 주행 중)",
+        "signal": "기어 D · 45km/h · TripInfo.eta 11:22",
+        "decision": "고객 답을 기다림",
+        "driver": "「다음 김○○ · 도착 11:22 · 약속 11:00 (+22)」",
+        "companion": "김○○ 휴대폰: 기다릴게요 / 1시간 뒤로 / 다른 날로"
+      }
+    },
+    {
+      "t": 20,
+      "hold": 5500,
+      "actions": [{ "type": "customer.reply", "jobId": "J2", "reply": "POSTPONE_60" }],
+      "caption": {
+        "title": "김○○ 고객이 「1시간 뒤로」를 누름 → 서버가 순서를 다시 짬",
+        "signal": "고객 링크 → 서버 replan()",
+        "decision": "김○○ 11:00 → 12:00. 약속 순으로 다시 줄 세우면 박○○(11:40)이 먼저 — 지금 가면 11:00쯤 도착(40분 일찍) → 앞당김 문의",
+        "driver": "음성 「김○○ 고객님이 1시간 뒤로 미루셨어요. 박○○ 고객님 먼저 갑니다」 + requestRoute(박○○)로 목적지 교체",
+        "companion": "박○○ 휴대폰: 「11:00~11:10 도착 가능한데 괜찮으세요?」"
+      }
+    },
+    {
+      "t": 40,
+      "hold": 4500,
+      "actions": [{ "type": "customer.reply", "jobId": "J3", "reply": "OK_EARLIER" }],
+      "caption": {
+        "title": "박○○ 고객이 「좋아요」",
+        "signal": "서버 → 차량 앱 푸시",
+        "decision": "박○○ 약속을 도착 예정 시각으로 확정",
+        "driver": "음성 「박○○ 고객님이 일찍 와도 좋대요」",
+        "companion": "박○○: 「11:00~11:10 사이에 갈게요」 · 관제: 순서 박○○ → 김○○ → 정○○ …"
+      }
+    },
+    {
+      "t": 55,
+      "hold": 4000,
+      "actions": [{ "type": "car.touch" }],
+      "caption": {
+        "title": "운전 중 일정표를 보려고 화면을 눌러도 막힘",
+        "signal": "차속 45km/h · 기어 D",
+        "decision": "주행 중 터치 입력 막음 — 순서 편집은 기어 P에서만",
+        "driver": "「주행 중에는 음성으로 · 정차(P) 후 사용」",
+        "companion": "변화 없음"
+      }
+    },
+    {
+      "t": 70,
+      "hold": 6000,
+      "actions": [{ "type": "voice.command", "intent": "READ_NEXT_JOB" }],
+      "caption": {
+        "title": "대신 음성으로 「다음 어디야?」",
+        "signal": "Gleo → Intent action=READ_NEXT_JOB",
+        "decision": "앱이 다음·그다음 방문을 찾아 Callback success",
+        "driver": "「다음은 박○○ 고객님, 11시 1분쯤 도착해요. 그다음은 김○○ 고객님, 12시 약속이에요.」",
+        "companion": "변화 없음 — 내비엔 다음 1곳만 (경유지 최대 2개 제약)"
+      }
+    }
+  ]
+}

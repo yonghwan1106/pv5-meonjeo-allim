@@ -1,0 +1,57 @@
+{
+  "note": "모두 가상 데이터다. 인물은 별칭(김○○ 등), 단지·주소·업체는 실존하지 않는 이름이며 [가상] 표시를 붙인다.",
+  "dayDate": "2026-11-02",
+  "dayLabel": "11월 2일(월) 가상 일정",
+  "driver": {
+    "alias": "가상 기사 A",
+    "company": "바른냉난방 [가상]",
+    "trade": "에어컨·보일러 설치·수리 1인 사업자 [가상]",
+    "vehicle": "PV5 카고 롱 (롱레인지 71.2kWh)",
+    "plateTail": "••12",
+    "heightMm": 1905
+  },
+  "nodes": [
+    { "id": "DEPOT", "label": "바른냉난방 사무실 [가상]", "short": "사무실", "x": 8, "y": 30, "address": "가상시 새솔로 5 (가상 주소)" },
+    { "id": "J1", "label": "햇살마을 3단지 [가상]", "short": "햇살마을", "x": 30, "y": 12, "address": "가상시 햇살로 12 (가상 주소)" },
+    { "id": "J2", "label": "강변하이츠 [가상]", "short": "강변하이츠", "x": 62, "y": 20, "address": "가상시 강변로 88 (가상 주소)" },
+    { "id": "J3", "label": "은행나무빌 [가상]", "short": "은행나무빌", "x": 46, "y": 36, "address": "가상시 은행길 7 (가상 주소)" },
+    { "id": "J4", "label": "푸른숲 아파트 [가상]", "short": "푸른숲", "x": 78, "y": 42, "address": "가상시 숲속로 21 (가상 주소)" },
+    { "id": "J4_PA", "label": "푸른숲 아파트 A동 지상 방문 주차 [가상]", "short": "A동 지상", "x": 75, "y": 47, "address": "가상시 숲속로 21 A동 앞 (가상 주소)", "parentJob": "J4" },
+    { "id": "J4_PB", "label": "푸른숲 아파트 B동 지하주차장 입구 [가상]", "short": "B동 지하 입구", "x": 83, "y": 39, "address": "가상시 숲속로 21 B동 지하 2층 입구 (가상 주소)", "parentJob": "J4" },
+    { "id": "J5", "label": "별빛타운 [가상]", "short": "별빛타운", "x": 66, "y": 56, "address": "가상시 별빛로 3 (가상 주소)" },
+    { "id": "J6", "label": "솔내음 빌라 [가상]", "short": "솔내음", "x": 34, "y": 54, "address": "가상시 솔내음길 40 (가상 주소)" }
+  ],
+  "jobs": [
+    { "id": "J1", "seq": 1, "customerAlias": "이○○", "phoneMasked": "010-****-1201", "promised": "09:00", "windowMin": 30, "estWorkMin": 60, "work": "벽걸이 에어컨 이전 설치", "token": "h7q2" },
+    { "id": "J2", "seq": 2, "customerAlias": "김○○", "phoneMasked": "010-****-2302", "promised": "11:00", "windowMin": 30, "estWorkMin": 50, "work": "벽걸이 에어컨 신규 설치", "token": "k4m9" },
+    { "id": "J3", "seq": 3, "customerAlias": "박○○", "phoneMasked": "010-****-3403", "promised": "11:40", "windowMin": 30, "estWorkMin": 40, "work": "보일러 점검", "token": "p2x8" },
+    { "id": "J4", "seq": 4, "customerAlias": "정○○", "phoneMasked": "010-****-4504", "promised": "13:30", "windowMin": 30, "estWorkMin": 70, "work": "스탠드 에어컨 설치", "token": "j6t3" },
+    { "id": "J5", "seq": 5, "customerAlias": "최○○", "phoneMasked": "010-****-5605", "promised": "15:00", "windowMin": 30, "estWorkMin": 30, "work": "보일러 교체 상담", "token": "c9r5" },
+    { "id": "J6", "seq": 6, "customerAlias": "한○○", "phoneMasked": "010-****-6706", "promised": "16:30", "windowMin": 30, "estWorkMin": 60, "work": "에어컨 분해 세척", "token": "n3w7" }
+  ],
+  "parking": {
+    "J4": {
+      "clearanceNote": "지하주차장 높이 제한 2.1m [가상]",
+      "entrances": [
+        { "id": "J4_PA", "label": "A동 지상 방문 주차", "underground": false, "clearanceMm": null },
+        { "id": "J4_PB", "label": "B동 지하 2층 입구", "underground": true, "clearanceMm": 2100 }
+      ]
+    }
+  },
+  "travelMin": {
+    "DEPOT": { "J1": 20, "J2": 35, "J3": 30, "J4": 40, "J5": 30, "J6": 25 },
+    "J1": { "J2": 32, "J3": 22, "J4": 30, "J5": 35, "J6": 28 },
+    "J2": { "J3": 18, "J4": 25, "J5": 30, "J6": 35 },
+    "J3": { "J4": 22, "J5": 25, "J6": 30 },
+    "J4": { "J5": 20, "J6": 28 },
+    "J5": { "J6": 18 }
+  },
+  "metersPerBaseMin": 450,
+  "congestionByHour": [
+    { "from": 7, "to": 9, "factor": 1.3, "label": "출근 시간" },
+    { "from": 9, "to": 11, "factor": 1.0, "label": "오전" },
+    { "from": 11, "to": 14, "factor": 1.1, "label": "점심 전후" },
+    { "from": 14, "to": 17, "factor": 1.0, "label": "오후" },
+    { "from": 17, "to": 20, "factor": 1.4, "label": "퇴근 시간" }
+  ]
+}

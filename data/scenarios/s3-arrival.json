@@ -1,0 +1,111 @@
+{
+  "id": "S3",
+  "short": "③ 도착·작업·출발",
+  "title": "③ 도착·작업 시작·출발이 저절로 기록돼요",
+  "summary": "내비 도착 이벤트 + 기어 P = 도착, 카고 뒷문 열림 = 작업 시작, 기어 D로 이탈 = 작업 완료·출발. 작업이 길어지면 출발 전에 다음 고객 지연을 미리 묻습니다.",
+  "setup": [
+    { "type": "admin.clock", "hhmm": "08:58" },
+    { "type": "admin.onSite", "jobId": "J1", "arrived": "08:58", "started": "09:02" },
+    { "type": "admin.clock", "hhmm": "10:30" },
+    { "type": "sim.gear", "gear": "D" },
+    { "type": "sim.speed", "kmh": 45 },
+    { "type": "navi.congestion", "addMin": 20 },
+    { "type": "voice.yes" },
+    { "type": "clock.advanceTo", "hhmm": "10:40" },
+    { "type": "customer.reply", "jobId": "J2", "reply": "POSTPONE_60" },
+    { "type": "customer.reply", "jobId": "J3", "reply": "OK_EARLIER" },
+    { "type": "clock.advanceTo", "hhmm": "10:58" },
+    { "type": "customer.reply", "jobId": "J3", "reply": "HOME_YES" }
+  ],
+  "steps": [
+    {
+      "t": 0,
+      "hold": 4500,
+      "actions": [],
+      "caption": {
+        "title": "박○○ 고객 집 도착 약 3분 전 (10:58)",
+        "signal": "기어 D · 45km/h",
+        "decision": "도착 10분 전 확인은 이미 끝남 (박○○ 「집에 있어요」)",
+        "driver": "「다음 박○○ · 도착 11:01」",
+        "companion": "박○○ 휴대폰: 진행 단계 「이동 중」"
+      }
+    },
+    {
+      "t": 30,
+      "hold": 3500,
+      "actions": [{ "type": "navi.arrive" }],
+      "caption": {
+        "title": "목적지 도착",
+        "signal": "NaviHelper onDestinationArrived() · 차속 0",
+        "decision": "기어가 아직 D → 도착 알림은 기어 P를 확인한 뒤 (근처 정차를 도착으로 오인하지 않게)",
+        "driver": "칩 「목적지 도착 — 기어 P에서 도착 알림」",
+        "companion": "아직 변화 없음"
+      }
+    },
+    {
+      "t": 45,
+      "hold": 4500,
+      "actions": [{ "type": "sim.gear", "gear": "P" }],
+      "caption": {
+        "title": "기어 P — 도착 확정, 기사는 아무것도 누르지 않음",
+        "signal": "GEAR_SELECTION = GEAR_PARK",
+        "decision": "도착 이벤트 + 기어 P → 서버가 고객에게 「도착」 발송, Odometer 기록",
+        "driver": "주차 화면 (터치 가능): 「도착 알림 보냄」, 오늘 일정·고객 메모",
+        "companion": "박○○: 「기사님이 도착했어요」"
+      }
+    },
+    {
+      "t": 90,
+      "hold": 5000,
+      "actions": [{ "type": "sim.door", "area": "REAR", "open": true }],
+      "caption": {
+        "title": "카고 뒷문 열림 = 작업 시작",
+        "signal": "registerDoorPosition 알림 ← REAR = 1 (Open) · [가정] PV5 카고 뒷문 = DoorValue.REAR 매핑",
+        "decision": "「도착」 상태에서 뒷문 열림 → 작업 시작 시각 기록",
+        "driver": "「작업 시작 기록」 + 작업 타이머 (예정 40분)",
+        "companion": "박○○: 「장비를 내리고 작업을 시작했어요」 · 관제 타임라인 기록"
+      }
+    },
+    {
+      "t": 120,
+      "hold": 6500,
+      "actions": [{ "type": "clock.advanceTo", "hhmm": "11:41" }],
+      "caption": {
+        "title": "(시간 건너뛰기 11:41) 작업이 예정보다 길어짐 → 출발 전에 다음 고객 지연 예측",
+        "signal": "기어 P · 뒷문 열림 유지 · 작업 41분째",
+        "decision": "predictOverrun: 끝나는 예상 11:50 + 이동 20분 = 12:10 → 김○○ 12:00 약속에 +10분",
+        "driver": "주차 중이라 버튼도 가능: 「다음 김○○ 고객님 지연 — 미리 알릴까요?」 [미리 알리기] [괜찮아요] + Gleo 음성 질문",
+        "companion": "아직 아무것도 가지 않음"
+      }
+    },
+    {
+      "t": 125,
+      "hold": 4500,
+      "actions": [{ "type": "car.tap", "button": "NOTIFY_OVERRUN" }],
+      "caption": {
+        "title": "기사가 정차 중 [미리 알리기]를 누름",
+        "signal": "기어 P → 터치 허용",
+        "decision": "앱 → 서버 발송 요청 (승인 = 터치)",
+        "driver": "칩 「다음 고객께 미리 알림 ✓」",
+        "companion": "김○○: 「앞 현장 작업이 길어져 약 10분 늦어요. 12:10~12:20」"
+      }
+    },
+    {
+      "t": 130,
+      "hold": 6000,
+      "actions": [
+        { "type": "clock.advanceTo", "hhmm": "11:48" },
+        { "type": "sim.door", "area": "REAR", "open": false },
+        { "type": "sim.gear", "gear": "D" },
+        { "type": "sim.speed", "kmh": 30 }
+      ],
+      "caption": {
+        "title": "작업 끝 → 뒷문 닫고 출발 (11:48)",
+        "signal": "REAR = 0 (Closed) → 기어 D · 차속 30km/h",
+        "decision": "현장에서 기어 D + 차속 > 0 → 작업 완료·출발 기록, 다음 목적지 requestRoute(김○○)",
+        "driver": "주행 화면으로 전환: 「다음 김○○ · 도착 12:08」",
+        "companion": "박○○: 「작업을 마쳤어요」 / 김○○: 「출발했어요, 약 20분 뒤」"
+      }
+    }
+  ]
+}

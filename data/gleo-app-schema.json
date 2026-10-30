@@ -1,0 +1,57 @@
+{
+  "packageName": "kr.creativenexus.meonjeoallim",
+  "appDescription": "A field service assistant that tells the next customer about delays and arrivals using the vehicle's navigation ETA, and reorders today's visits.",
+  "invokeWord": "먼저 알림",
+  "version": "0.1.0",
+  "actionCalls": [
+    {
+      "type": "function",
+      "function": {
+        "name": "NOTIFY_DELAY",
+        "description": "Send a delay notice with the expected arrival window to the next customer on today's visit list.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "delayMinutes": {
+              "type": "number",
+              "description": "Expected delay in minutes compared with the promised visit time."
+            }
+          },
+          "required": []
+        },
+        "component": "service"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "READ_NEXT_JOB",
+        "description": "Read out the next customer, the expected arrival time and the visit after that.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "component": "service"
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "CHANGE_TO_PARKING",
+        "description": "Change the navigation destination to the parking entrance that the customer has shared.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "entranceName": {
+              "type": "string",
+              "description": "Name of the parking entrance shared by the customer."
+            }
+          },
+          "required": []
+        },
+        "component": "service"
+      }
+    }
+  ]
+}
