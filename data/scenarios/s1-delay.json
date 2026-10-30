@@ -18,9 +18,9 @@
       "caption": {
         "title": "앞 현장(이○○)이 길어져 10:30에 출발 — 다음은 김○○ 고객 11:00 약속",
         "signal": "기어 D · 차속 45km/h (AAOS GEAR_SELECTION · PERF_VEHICLE_SPEED)",
-        "decision": "내비 도착 예정 11:02 − 약속 11:00 = +2분 → 기준(10분) 아래라 묻지 않음",
-        "driver": "큰 글자 두 줄: 「다음 김○○ · 도착 11:02」, 터치는 막힘",
-        "companion": "김○○ 휴대폰: 「기사님이 출발했어요, 11:00~11:10 도착 예정」 (지도·위치 없음)"
+        "decision": "내비 도착 예정 {eta} − 약속 {promised} = {delay} → 기준(10분) 아래라 묻지 않음",
+        "driver": "큰 글자 두 줄: 「김○○ 고객 · 도착 {eta} · 약속 {promised} ({delay})」, 터치는 막힘",
+        "companion": "김○○ 휴대폰: 「기사님이 출발했어요」 · 도착 예정 {win:J2} (지도·위치 없음)"
       }
     },
     {
@@ -28,10 +28,10 @@
       "hold": 3500,
       "actions": [{ "type": "navi.congestion", "addMin": 20 }],
       "caption": {
-        "title": "길이 막혀 도착 예정이 11:22로 밀림",
-        "signal": "NaviHelper onTripInfo → TripInfo.eta 11:22",
-        "decision": "predictDelayMin = +22분 ≥ 10분 → shouldAskDelay = 예",
-        "driver": "Gleo 카드 「김○○ 고객님께 약 20분 늦는다고 알릴까요?」 — 음성으로 답하세요 (7초)",
+        "title": "길이 막혀(정체 +20분) 도착 예정이 약속보다 10분 넘게 밀림",
+        "signal": "NaviHelper onTripInfo → TripInfo.eta {eta} (약속 {promised})",
+        "decision": "predictDelayMin = {delay} ≥ 10분 → shouldAskDelay = 예",
+        "driver": "Gleo 카드 「{ask}」 — 음성으로 답하세요 (7초)",
         "companion": "아직 아무것도 가지 않음 — 운전자 한마디 승인을 기다림 (오발송 방지)"
       }
     },
@@ -43,8 +43,8 @@
         "title": "운전자가 「그래」 한마디 → 서버가 대신 발송",
         "signal": "Gleo → Intent action=NOTIFY_DELAY → 앱",
         "decision": "앱이 서버에 발송 요청, Callback status=success (7초 제한 안)",
-        "driver": "음성·자막 「김○○ 고객님께 약 20분 늦는다고 보냈어요」 + 칩 「지연 알림 보냄 ✓」",
-        "companion": "김○○: 「길이 막혀 약 20분 늦어요. 11:20~11:30 사이 도착」 + 버튼 3개"
+        "driver": "음성·자막 「{reply}」 + 칩 「지연 알림 보냄 ✓」",
+        "companion": "김○○: 「길이 막혀 약 {sentN:J2}분 늦어요. {win:J2} 사이 도착」 + 버튼 3개"
       }
     },
     {
@@ -55,7 +55,7 @@
         "title": "김○○ 고객이 「기다릴게요」를 누름",
         "signal": "고객 링크 → 서버 POST /api/reply → 차량 앱으로 푸시",
         "decision": "순서는 그대로, 응답만 운전자에게 전달",
-        "driver": "음성 「김○○ 고객님이 기다리신대요」 + 칩",
+        "driver": "음성 「{said}」 + 칩",
         "companion": "업체 관제 타임라인에 응답 기록"
       }
     },
@@ -92,9 +92,9 @@
       ],
       "caption": {
         "title": "또 막혀 더 밀림 → 한 번 더 묻기",
-        "signal": "TripInfo.eta 11:35쯤",
-        "decision": "이미 알린 +22분보다 10분 이상 더 밀림 → 다시 묻기 (renotifyStepMin 10분)",
-        "driver": "Gleo 「김○○ 고객님께 약 35분 늦는다고 다시 알릴까요?」",
+        "signal": "TripInfo.eta {eta} (약속 {promised}, {delay})",
+        "decision": "이미 알린 약 {sentN:J2}분보다 10분 이상 더 밀림 → 다시 묻기 (renotifyStepMin 10분)",
+        "driver": "Gleo 「{ask}」",
         "companion": "승인 대기"
       }
     },
@@ -107,7 +107,7 @@
         "signal": "Gleo: 함수 호출 안 함",
         "decision": "거절한 지연 값을 기억 → 10분 더 밀리기 전엔 다시 묻지 않음 (졸라 대지 않기)",
         "driver": "「알겠어요. 보내지 않을게요.」",
-        "companion": "업체 관제: 「알림 안 보냄 (운전자 거절)」 기록, 고객 화면은 그대로"
+        "companion": "업체 관제: 「알림 안 보냄 (운전자 거절)」 기록, 고객 화면은 그대로 ({win:J2})"
       }
     }
   ]

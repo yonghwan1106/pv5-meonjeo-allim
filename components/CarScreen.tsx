@@ -10,6 +10,7 @@ import { DRIVE_MODE_LABEL } from "@/lib/logic/driveMode";
 import { JOB_STATUS_LABEL } from "@/lib/logic/jobState";
 import { fmtHHMM } from "@/lib/logic/time";
 import { predictDelayMin, delayForMessage } from "@/lib/logic/delay";
+import { fmtDiff, shownDiffMin } from "@/lib/engine/captionVars";
 import RouteMap from "./RouteMap";
 
 const TONE: Record<string, string> = { ok: "var(--ok)", warn: "var(--warn)", info: "var(--info)", danger: "var(--danger)" };
@@ -58,12 +59,20 @@ export default function CarScreen({ s, dispatch }: { s: EngineState; dispatch: (
       {app.gleo && <GleoCard s={s} />}
       {!app.gleo && app.gleoResult && <GleoResult s={s} />}
       {s.overlay && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/75 text-center" role="alert">
-          <div className="cq-2xl font-extrabold" style={{ color: "var(--warn)" }}>
+        // 불투명 배경 + 뒤 화면 흐림 — 뒤 글자가 비쳐 겹쳐 보이지 않게 (안내는 큰 글자 하나)
+        <div
+          className="absolute inset-0 z-30 flex flex-col items-center justify-center px-[4cqw] text-center"
+          style={{ background: "rgba(8,10,13,0.96)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+          role="alert"
+          data-testid="touch-blocked"
+        >
+          <div className="cq-sm mb-[1.2cqw] rounded-full border px-[1.4cqw] py-[0.3cqw] font-bold" style={{ color: "var(--warn)", borderColor: "var(--warn)" }}>
+            터치 막음 · 기어 {s.app.gear} · {s.app.speedKmh} km/h
+          </div>
+          <div className="text-[3.6cqw] font-extrabold leading-tight" style={{ color: "#fff" }}>
             {s.overlay.text}
           </div>
-          <div className="cq-md mt-[1.2cqw] text-[#d6dade]">도로교통법 제49조 제1항 제11의2호 — 운전 중 영상표시장치 조작 금지</div>
-          <div className="cq-sm mt-[0.6cqw] text-muted">「다음 어디야?」처럼 Gleo 음성으로 물어보세요</div>
+          <div className="cq-sm mt-[1.6cqw] text-[#b8c0c8]">도로교통법 제49조 제1항 제11의2호 — 운전 중 영상표시장치 조작 금지 · 「다음 어디야?」처럼 Gleo 음성으로</div>
         </div>
       )}
     </div>
@@ -141,15 +150,15 @@ function DrivingPane({ s }: { s: EngineState }) {
   }
   const delay = predictDelayMin(app.trip.etaMin, job.promisedMin);
   const dColor = delay >= 10 ? "var(--danger)" : delay > 0 ? "var(--warn)" : "var(--ok)";
-  // 화면에 찍힌 두 시각(분 단위 내림)의 차이로 보여 줘야 「11:34 · 11:00 (+34분)」처럼 산수가 맞는다
-  const shown = Math.floor(app.trip.etaMin + 1e-9) - Math.floor(job.promisedMin + 1e-9);
+  // 화면에 찍힌 두 시각(분 단위 내림)의 차이로 보여 줘야 「11:34 · 11:00 (+34분)」처럼 산수가 맞는다 (자막도 같은 함수)
+  const shown = shownDiffMin(app.trip.etaMin, job.promisedMin);
   return (
     <div className="flex h-full flex-col p-[2.2cqw]">
       <div className="cq-sm text-muted">다음 방문</div>
       <div className="cq-2xl mt-[0.3cqw] font-extrabold">{job.customerAlias} 고객</div>
       <div className="cq-xl mt-[0.6cqw] font-bold tabular-nums">
         도착 {fmtHHMM(app.trip.etaMin)} · 약속 {fmtHHMM(job.promisedMin)}{" "}
-        <span style={{ color: dColor }}>({shown > 0 ? `+${shown}분` : shown === 0 ? "정시" : `−${-shown}분`})</span>
+        <span style={{ color: dColor }}>({fmtDiff(shown)})</span>
       </div>
       {line && (
         <div className="cq-md mt-[1.4cqw] inline-flex max-w-full self-start rounded-full border px-[1.2cqw] py-[0.4cqw] font-bold" style={{ color: TONE[line.tone], borderColor: TONE[line.tone] }}>
@@ -327,8 +336,8 @@ function GleoCard({ s }: { s: EngineState }) {
       <div className="cq-xs flex items-center gap-[0.8cqw] text-[#c8b6ff]">
         <span className="font-bold">Gleo · {g.functionName}</span>
         <span>asking</span>
-        <span className="ml-auto rounded-full border px-[0.6cqw]" style={{ borderColor: "var(--warn)", color: "var(--warn)" }}>
-          [가정] 앱이 먼저 묻기(proactive)
+        <span className="ml-auto rounded-full border px-[0.6cqw] font-bold" style={{ borderColor: "var(--warn)", color: "var(--warn)" }} title="Gleo 디자인 문서에 proactive suggestion이 나오지만 서드파티 앱이 여는 API는 문서 미확인">
+          [가정 · 문서 미확인] 앱이 먼저 묻기
         </span>
       </div>
       <div className="cq-lg mt-[0.6cqw] font-bold">{g.promptKo}</div>
@@ -345,6 +354,7 @@ function GleoCard({ s }: { s: EngineState }) {
           <span key={i} className="h-[0.5cqw] flex-1 rounded-full" style={{ background: i < secs ? "#c8b6ff" : "#3a3450" }} />
         ))}
       </div>
+      <div className="cq-xs mt-[0.5cqw] text-[#b9b0d8]">안 되면 대체 흐름: 앱 알림 카드 + 비프 → 운전자가 호출어 「먼저 알림」으로 불러 답함</div>
     </div>
   );
 }

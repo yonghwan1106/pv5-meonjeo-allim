@@ -42,11 +42,12 @@ export default function ApiLog({ s, height = 180 }: { s: EngineState; height?: n
       </div>
       <div ref={box} className="overflow-y-auto px-2 py-1 font-mono text-[12px] leading-[1.45] scroll-thin" style={{ height }}>
         {rows.map((l) => (
-          <div key={l.id} className="flex items-start gap-2 border-b border-[#1b2026] py-[2px]">
+          // 한 줄 = 한 호출 (긴 내용은 말줄임 + 마우스를 올리면 전체) — 좁은 화면에서도 최근 줄 수가 줄지 않게
+          <div key={l.id} className="flex items-center gap-2 whitespace-nowrap border-b border-[#1b2026] py-[2px]" title={l.detail ? `${l.name} — ${l.detail}` : l.name}>
             <span className="w-11 shrink-0 tabular-nums text-muted">{fmtHHMM(l.tSec / 60)}</span>
             <LayerBadge layer={l.layer} />
-            <span className="shrink-0 font-bold text-[#e5e8eb]">{l.name}</span>
-            {l.detail && <span className="min-w-0 text-[#aab3bd]">{l.detail}</span>}
+            <span className="max-w-[55%] shrink-0 truncate font-bold text-[#e5e8eb]">{l.name}</span>
+            {l.detail && <span className="min-w-0 flex-1 truncate text-[#aab3bd]">{l.detail}</span>}
           </div>
         ))}
       </div>

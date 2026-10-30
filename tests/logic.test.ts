@@ -152,7 +152,7 @@ describe("재배치 (replan)", () => {
     expect(r15.offer?.etaMin).toBe(parseHHMM("11:25"));
   });
   it("「좋아요」면 약속을 제안 시각으로 확정, 「기다릴게요」는 그대로", () => {
-    expect(applyReply(jobs[1], "OK_EARLIER", parseHHMM("11:01")).promisedMin).toBe(parseHHMM("11:01"));
+    expect(applyReply(jobs[1], "OK_EARLIER", parseHHMM("11:01")).promisedMin).toBe(parseHHMM("11:00")); // 보낸 범위 11:00~11:10의 시작
     expect(applyReply(jobs[0], "WAIT")).toEqual(jobs[0]);
   });
   it("내비에는 다음 1곳 + 그다음 1곳만 — 경유지 최대 2개를 넘지 않는다", () => {

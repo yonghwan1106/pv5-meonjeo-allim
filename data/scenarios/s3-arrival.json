@@ -23,11 +23,11 @@
       "hold": 4500,
       "actions": [],
       "caption": {
-        "title": "박○○ 고객 집 도착 약 3분 전 (10:58)",
-        "signal": "기어 D · 45km/h",
+        "title": "박○○ 고객 집 도착 직전 (10:58)",
+        "signal": "기어 D · 45km/h · TripInfo.eta {eta} (남은 {remainKm}km)",
         "decision": "도착 10분 전 확인은 이미 끝남 (박○○ 「집에 있어요」)",
-        "driver": "「다음 박○○ · 도착 11:01」",
-        "companion": "박○○ 휴대폰: 진행 단계 「이동 중」"
+        "driver": "「박○○ 고객 · 도착 {eta} · 약속 {promised} ({delay})」",
+        "companion": "박○○ 휴대폰: 진행 단계 「이동 중」 · 도착 예정 {win:J3}"
       }
     },
     {
@@ -51,7 +51,7 @@
         "signal": "GEAR_SELECTION = GEAR_PARK",
         "decision": "도착 이벤트 + 기어 P → 서버가 고객에게 「도착」 발송, Odometer 기록",
         "driver": "주차 화면 (터치 가능): 「도착 알림 보냄」, 오늘 일정·고객 메모",
-        "companion": "박○○: 「기사님이 도착했어요」"
+        "companion": "박○○: 「{notice:J3}」"
       }
     },
     {
@@ -63,7 +63,7 @@
         "signal": "registerDoorPosition 알림 ← REAR = 1 (Open) · [가정] PV5 카고 뒷문 = DoorValue.REAR 매핑",
         "decision": "「도착」 상태에서 뒷문 열림 → 작업 시작 시각 기록",
         "driver": "「작업 시작 기록」 + 작업 타이머 (예정 40분)",
-        "companion": "박○○: 「장비를 내리고 작업을 시작했어요」 · 관제 타임라인 기록"
+        "companion": "박○○: 「{notice:J3}」 · 관제 타임라인 기록"
       }
     },
     {
@@ -72,9 +72,9 @@
       "actions": [{ "type": "clock.advanceTo", "hhmm": "11:41" }],
       "caption": {
         "title": "(시간 건너뛰기 11:41) 작업이 예정보다 길어짐 → 출발 전에 다음 고객 지연 예측",
-        "signal": "기어 P · 뒷문 열림 유지 · 작업 41분째",
-        "decision": "predictOverrun: 끝나는 예상(지금 + 최소 10분) + 이동 20분 → 김○○ 12:00 약속에 약 +10분 → 미리 물음",
-        "driver": "주차 중이라 버튼도 가능: 「다음 김○○ 고객님 지연 — 미리 알릴까요?」 [미리 알리기] [괜찮아요] + Gleo 음성 질문",
+        "signal": "기어 P · 뒷문 열림 유지 · 작업 {work}분째 (예정 40분)",
+        "decision": "predictOverrun: 끝나는 예상(지금 + 최소 10분) + 이동 시간 → 김○○ {promised:J2} 약속에 {overEta} 도착, 약 {overN}분 늦음 → 미리 물음 (물은 값은 답할 때까지 고정)",
+        "driver": "주차 중이라 버튼도 가능: 「다음 김○○ 고객님 도착이 {overEta}쯤, 약 {overN}분 늦어져요 — 미리 알릴까요?」 [미리 알리기] [괜찮아요] + 같은 값의 Gleo 음성 질문",
         "companion": "아직 아무것도 가지 않음"
       }
     },
@@ -87,7 +87,7 @@
         "signal": "기어 P → 터치 허용",
         "decision": "앱 → 서버 발송 요청 (승인 = 터치)",
         "driver": "칩 「다음 고객께 미리 알림 ✓」",
-        "companion": "김○○: 「앞 현장 작업이 길어져 약 10분 늦어요. 12:10~12:20 사이 도착」"
+        "companion": "김○○: 「앞 현장 작업이 길어져 약 {sentN:J2}분 늦어요. {win:J2} 사이 도착」"
       }
     },
     {
@@ -103,8 +103,8 @@
         "title": "작업 끝 → 뒷문 닫고 출발 (11:48)",
         "signal": "REAR = 0 (Closed) → 기어 D · 차속 30km/h",
         "decision": "현장에서 기어 D + 차속 > 0 → 작업 완료·출발 기록, 다음 목적지 requestRoute(김○○)",
-        "driver": "주행 화면으로 전환: 「다음 김○○ · 도착 12:07」",
-        "companion": "박○○: 「작업을 마쳤어요」 / 김○○: 「출발했어요, 약 20분 뒤」"
+        "driver": "주행 화면으로 전환: 「김○○ 고객 · 도착 {eta} · 약속 {promised} ({delay})」",
+        "companion": "박○○: 「작업을 마쳤어요」 / 김○○: 「{notice:J2}」"
       }
     }
   ]

@@ -2,6 +2,7 @@
 /** 안내 자막 — 단계마다 「차량 신호 변화 → 앱 판단 → 운전자 음성/화면 → 동반 화면 알림」 */
 import type { EngineAction, EngineState } from "@/lib/engine/types";
 import { getScenario } from "@/lib/engine/scenarios";
+import { fillCaption } from "@/lib/engine/captionVars";
 
 const FLOW = [
   { key: "signal", label: "① 차량 신호 변화", color: "#7cc4d6" },
@@ -21,7 +22,7 @@ export default function CaptionBar({ s, dispatch }: { s: EngineState; dispatch: 
         <span className="badge" style={{ color: "var(--accent)" }}>
           {sc.short} · 단계 {idx}/{sc.steps.length - 1}
         </span>
-        <h2 className="text-[16px] font-extrabold leading-snug">{st.caption.title}</h2>
+        <h2 className="text-[16px] font-extrabold leading-snug">{fillCaption(st.caption.title, s)}</h2>
         <div className="ml-auto flex items-center gap-1">
           {s.playing && s.holdMs > 0 && <span className="text-[11px] text-muted">읽는 시간 {Math.ceil(s.holdMs / 1000)}초</span>}
           {last ? (
@@ -40,7 +41,7 @@ export default function CaptionBar({ s, dispatch }: { s: EngineState; dispatch: 
             <div className="text-[11px] font-bold" style={{ color: f.color }}>
               {f.label}
             </div>
-            <div className="text-[12.5px] leading-snug text-[#e1e4e8]">{st.caption[f.key]}</div>
+            <div className="text-[12.5px] leading-snug text-[#e1e4e8]">{fillCaption(st.caption[f.key], s)}</div>
           </div>
         ))}
       </div>

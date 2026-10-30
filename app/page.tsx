@@ -45,6 +45,9 @@ export default function Home() {
           <b>먼저 알림</b>[가칭]은 출장 기사의 PV5 차량 화면에서 도는 앱입니다. PV5 내비의 도착 예정 시각으로 고객에게 「늦어요」·「곧 도착」을 먼저 보내고,
           고객의 답에 맞춰 오늘 방문 순서를 다시 짭니다. 기사는 운전 중 휴대폰을 집지 않고, 「그래」 한마디만 합니다.
         </p>
+        <p className="mt-3 max-w-[860px] text-sm text-muted" data-testid="sync-note">
+          ※ 고객 링크(<code>/c/…</code>)와 <code>/car</code>는 같은 브라우저의 다른 탭에서 열어야 시연과 동기화됩니다(실서비스는 서버 푸시).
+        </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link href="/demo" className="btn btn-primary !px-5 !py-3 !text-base no-underline">
             시연 열기 (3분할)

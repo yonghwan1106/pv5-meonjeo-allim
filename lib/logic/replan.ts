@@ -6,6 +6,7 @@
  */
 import { MAX_WAYPOINTS } from "../pleos/naviHelper";
 import { PLANNABLE_STATUSES, nextJobStatus, type JobStatus } from "./jobState";
+import { etaWindow } from "./time";
 
 export type CustomerReply =
   | "WAIT"
@@ -38,7 +39,8 @@ export function applyReply<T extends PlanJob>(job: T, reply: CustomerReply, offe
     case "HOME_NO":
       return { ...job, status: nextJobStatus(job.status, "OTHER_DAY") };
     case "OK_EARLIER":
-      return typeof offerEtaMin === "number" ? { ...job, promisedMin: Math.round(offerEtaMin) } : job;
+      // 고객은 「11:00~11:10 사이」라는 범위를 받고 수락했다 → 약속 = 그 범위의 시작(11:01이 아니라 11:00)
+      return typeof offerEtaMin === "number" ? { ...job, promisedMin: etaWindow(offerEtaMin).from } : job;
     default:
       return job;
   }

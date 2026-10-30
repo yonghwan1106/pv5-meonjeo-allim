@@ -476,10 +476,9 @@ export class CarApp {
       nextPromisedMin: next.promisedMin,
       minRemainWorkMin: this.d.rules.minRemainWorkMin,
     });
-    if (s.overrun && s.overrun.nextJobId === next.id) {
-      s.overrun.delayMin = r.nextDelayMin;
-      s.overrun.etaMin = r.nextEtaMin;
-    }
+    // 이미 물어본 값은 답할 때까지 고정한다 — Gleo 음성(「12시 9분쯤」)과 화면 카드가 같은 시각을 말해야 한다.
+    // 운전자가 답하지 않으면(시간 초과) onDismissed가 overrun을 지우고, 10분 더 밀리면 새 값으로 다시 묻는다.
+    if (s.overrun && s.overrun.nextJobId === next.id) return;
     if (!s.gleo && shouldAskDelay(r.nextDelayMin, s.notified[next.id], s.declined[next.id], this.d.rules)) {
       s.overrun = { nextJobId: next.id, delayMin: r.nextDelayMin, etaMin: r.nextEtaMin };
       this.d.hub.log("APP", "판단 predictOverrun", `작업 예정 ${cur.estWorkMin}분 초과 예상 → 다음 ${next.customerAlias} +${r.nextDelayMin}분`);

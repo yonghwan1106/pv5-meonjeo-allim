@@ -18,6 +18,9 @@ const DOORS: { area: DoorValue; label: string; note?: string }[] = [
   { area: "REAR", label: "REAR 카고 뒷문", note: "[가정] 매핑" },
 ];
 
+/** 단계 목록 제목 — 아직 실행 전인 단계도 있으니 엔진 값 변수({eta} 등)는 쓰지 않는다(혹시 있으면 「…」) */
+const stepTitle = (t: string) => t.replace(/\{[^}]+\}/g, "…");
+
 function Card({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   return (
     <section className="card p-3">
@@ -82,11 +85,12 @@ export function ScenarioControls({ s, dispatch, onFirstPlay }: { s: EngineState;
         {sc.steps.map((st, i) => (
           <li key={i}>
             <button
-              className="w-full truncate rounded px-1.5 py-0.5 text-left"
+              className="w-full whitespace-normal break-keep rounded px-1.5 py-0.5 text-left leading-snug"
               style={{ background: i === idx ? "#26323a" : "transparent", color: i <= idx ? "var(--text)" : "var(--muted)", fontWeight: i === idx ? 700 : 400 }}
               onClick={() => dispatch({ type: "ctl.jump", index: i })}
+              title={`${i}. ${stepTitle(st.caption.title)}`}
             >
-              {i}. {st.caption.title}
+              {i}. {stepTitle(st.caption.title)}
             </button>
           </li>
         ))}

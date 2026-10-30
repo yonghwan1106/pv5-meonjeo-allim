@@ -33,6 +33,19 @@ export default function SdkPage() {
         시제품은 <code>lib/pleos/mock/*</code>가 이 인터페이스를 구현하고, 실차에서는 그 자리에 SDK를 꽂습니다. 판단 로직(<code>lib/logic/*.ts</code>)은 순수 함수라 Kotlin으로 그대로 옮깁니다.
       </p>
 
+      <div className="card my-3 border-l-4 p-4" style={{ borderLeftColor: "var(--warn)" }} data-testid="gleo-proactive-note">
+        <p className="!mt-0 font-bold" style={{ color: "var(--warn)" }}>
+          [가정 · 문서 미확인] 「앱이 먼저 묻기(proactive)」
+        </p>
+        <p className="!mb-0">
+          Gleo 디자인 문서(Experiences/gleo-ai)에는 대화를 여는 방법으로 PTT·wake word와 함께 proactive suggestion이 나오지만, 서드파티 앱이 그 질문을 띄우는 API는 App Integration Guide(core-concepts·app-capability·action_callback)에서 확인하지 못했습니다.
+          그래서 차량 화면의 Gleo 질문 카드(「김○○ 고객님께 약 20분 늦는다고 알릴까요?」)와 웹 모의 <code>requestProactiveSuggestion</code>은 <b>[가정]</b>입니다.{" "}
+          <b>열려 있지 않으면 대체 흐름</b>: 앱이 지연을 판단하면 자기 앱 창에 큰 <b>알림 카드</b>를 띄우고 짧은 <b>비프</b>를 한 번 냅니다 → 운전자가 Gleo 호출어로 「먼저 알림, 늦는다고 알려 줘」라고 말하면 →
+          Gleo가 문서에 있는 방식대로 App Schema의 <code>NOTIFY_DELAY</code>를 호출하고 → 앱은 7초 안에 Callback <code>success</code>로 회신합니다(시뮬레이터 「늦는다고 알려 줘」 버튼이 이 흐름).
+          판단·발송·고객 화면은 그대로이고, 「묻는 쪽」만 앱 → 운전자로 바뀝니다.
+        </p>
+      </div>
+
       <h2>대응표 (웹 Mock ↔ Pleos SDK ↔ 권한)</h2>
       <div className="overflow-x-auto">
         <table>
@@ -94,7 +107,7 @@ export default function SdkPage() {
       <p>
         규칙 검사(<code>validateAppSchema</code>): {errors.length === 0 ? <b style={{ color: "var(--ok)" }}>통과 — 함수 3개 이하 · 이름 대문자_밑줄 · 설명 영어</b> : errors.join(", ")}.
         Callback은 <code>success / asking / fail</code>, 7초 안에 <code>ai.pleos.playground.intent.action.APP_ACTION_RESPONSE</code> 브로드캐스트로 회신합니다.
-        앱이 먼저 묻는 proactive 제안은 서드파티 공개 여부가 문서에 없어 <b style={{ color: "var(--warn)" }}>[가정]</b>입니다(대체: 알림 카드 + 비프 + 호출어 「먼저 알림」).
+        앱이 먼저 묻는 proactive 제안은 서드파티 공개 여부가 문서에 없어 <b style={{ color: "var(--warn)" }}>[가정]</b>입니다(대체 흐름은 맨 위 상자).
       </p>
       <pre>
         <code>{JSON.stringify(schema, null, 2)}</code>
