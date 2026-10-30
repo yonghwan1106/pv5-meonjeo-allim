@@ -33,7 +33,7 @@
     {
       "t": 30,
       "hold": 3500,
-      "actions": [{ "type": "navi.arrive" }],
+      "actions": [{ "type": "clock.advanceTo", "hhmm": "11:00" }, { "type": "navi.arrive" }],
       "caption": {
         "title": "목적지 도착",
         "signal": "NaviHelper onDestinationArrived() · 차속 0",
@@ -87,7 +87,7 @@
         "signal": "기어 P → 터치 허용",
         "decision": "앱 → 서버 발송 요청 (승인 = 터치)",
         "driver": "칩 「다음 고객께 미리 알림 ✓」",
-        "companion": "김○○: 「앞 현장 작업이 길어져 약 10분 늦어요. 12:05~12:15 사이 도착」"
+        "companion": "김○○: 「앞 현장 작업이 길어져 약 10분 늦어요. 12:10~12:20 사이 도착」"
       }
     },
     {
@@ -103,7 +103,7 @@
         "title": "작업 끝 → 뒷문 닫고 출발 (11:48)",
         "signal": "REAR = 0 (Closed) → 기어 D · 차속 30km/h",
         "decision": "현장에서 기어 D + 차속 > 0 → 작업 완료·출발 기록, 다음 목적지 requestRoute(김○○)",
-        "driver": "주행 화면으로 전환: 「다음 김○○ · 도착 12:08」",
+        "driver": "주행 화면으로 전환: 「다음 김○○ · 도착 12:07」",
         "companion": "박○○: 「작업을 마쳤어요」 / 김○○: 「출발했어요, 약 20분 뒤」"
       }
     }

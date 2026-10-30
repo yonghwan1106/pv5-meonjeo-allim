@@ -31,6 +31,8 @@ export interface Job {
   token: string;
   status: JobStatus;
   etaMin: number | null;
+  /** 고객에게 실제로 보낸 도착 예정 시각 — 고객 링크는 이 값만 보여 준다(승인 전 ETA 변화는 노출하지 않음) */
+  notifiedEtaMin: number | null;
   arrivedAt: number | null;
   workStartedAt: number | null;
   departedAt: number | null;

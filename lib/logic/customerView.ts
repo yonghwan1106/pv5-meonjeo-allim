@@ -53,7 +53,7 @@ export function toCustomerView(job: Job, session: CustomerSession, notices: Noti
     stage: st.stage,
     stageIndex: st.index,
     promisedText: fmtHHMM(job.promisedMin),
-    etaText: moving && job.etaMin !== null ? fmtWindow(job.etaMin) : null,
+    etaText: moving && job.notifiedEtaMin !== null ? fmtWindow(job.notifiedEtaMin) : null,
     messages: notices
       .filter((n) => n.jobId === job.id)
       .slice(-6)

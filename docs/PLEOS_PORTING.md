@@ -37,7 +37,7 @@
 | 남은 시간·거리 | `onDestinationInfo` | `getDestinationInfo() → onDestinationInfo(remainDistance · remainTime · tollFare)` | 〃 | 사용 가능 |
 | 도착 | `onDestinationArrived` | `onDestinationArrived()` | 〃 | 사용 가능 |
 | 경유지 ≤ 2 | `addWaypoint`·`requestRouteWithWaypoints` — 3개 이상 거부 | `addWaypoint(WaypointIndex.FIRST/SECOND)` / `requestRouteWithWaypoints` | 〃 | 사용 가능 |
-| 음성 명령 3개 | `MockGleo` + `data/gleo-app-schema.json` | Gleo Interface App Schema(actionCalls ≤ 3) → Intent(action=함수명, `ACTION_PARAM`) → `APP_ACTION_RESPONSE` 브로드캐스트 | App Market 등록 | 사용 가능 |
+| 음성 명령 3개 | `MockGleo` + `data/gleo-app-schema.json` | Gleo Interface App Schema(actionCalls ≤ 3) → Intent(action=함수명, `ACTION_PARAM`) → `APP_ACTION_RESPONSE` 브로드캐스트 | App Market 등록 (사용 신청 절차 문서 미확인) | 가이드 공개 — 「신청 없이 바로 사용」 목록(Vehicle State·NaviHelper)에는 없음 |
 | 앱이 먼저 묻기 | `MockGleo.requestProactiveSuggestion` | proactive suggestion — 서드파티 공개 여부 문서 미확인 | — | **[가정]** (대체: 알림 카드 + 비프 + 호출어) |
 | 주행 중 터치 제한 | `deriveDriveMode` + 오버레이 | `CarUxRestrictionsManager.registerListener` + Distraction Optimization 선언 | AAOS | AAOS 표준 |
 | 안내 음성 | 브라우저 `speechSynthesis`(ko-KR) + 자막 | TextToSpeech SDK v3.3.1 | Playground 앱 등록 | **준비 중** |

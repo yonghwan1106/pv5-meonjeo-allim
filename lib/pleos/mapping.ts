@@ -1,6 +1,7 @@
 /** 웹 모의 어댑터 ↔ Pleos SDK 원문 API ↔ 권한 대응표 (/sdk 화면과 docs/PLEOS_PORTING.md 공용) */
 
-export type SdkStatus = "사용 가능" | "준비 중" | "AAOS 표준" | "가정";
+/** 「가이드 공개」 = 문서(가이드)는 공개됐지만 create-my-project의 「신청 없이 바로 사용 가능」 목록(Vehicle State·NaviHelper)에는 없음 — 등록 절차 확인 필요 */
+export type SdkStatus = "사용 가능" | "가이드 공개" | "준비 중" | "AAOS 표준" | "가정";
 
 export interface MappingRow {
   feature: string;
@@ -25,7 +26,7 @@ export const MAPPING: MappingRow[] = [
   { feature: "남은 시간·거리 (10분 전 확인)", web: "onDestinationInfo(remainTime · remainDistance)", pleos: "NaviHelper.getDestinationInfo() → onDestinationInfo(DestinationInfo)", permission: "〃", status: "사용 가능" },
   { feature: "도착 감지", web: "onDestinationArrived()", pleos: "NaviHelperEventListener.onDestinationArrived()", permission: "〃", status: "사용 가능" },
   { feature: "경유지 (최대 2개)", web: "addWaypoint / requestRouteWithWaypoints — 3개 이상 거부", pleos: "NaviHelper.addWaypoint(WaypointIndex.FIRST|SECOND) / requestRouteWithWaypoints", permission: "〃", status: "사용 가능" },
-  { feature: "음성 명령 3개", web: "MockGleo · data/gleo-app-schema.json", pleos: "Gleo Interface App Schema (actionCalls ≤ 3) · Intent action · APP_ACTION_RESPONSE 브로드캐스트", permission: "Pleos App Market 등록 시 App Schema 제출", status: "사용 가능" },
+  { feature: "음성 명령 3개", web: "MockGleo · data/gleo-app-schema.json", pleos: "Gleo Interface App Schema (actionCalls ≤ 3) · Intent action · APP_ACTION_RESPONSE 브로드캐스트", permission: "Pleos App Market 등록 시 App Schema 제출 (사용 신청 절차 문서 미확인)", status: "가이드 공개" },
   { feature: "앱이 먼저 묻기", web: "MockGleo.requestProactiveSuggestion", pleos: "Gleo proactive suggestion — 서드파티 공개 여부 문서 미확인 (대체: 알림 카드 + 비프 + 호출어)", permission: "—", status: "가정" },
   { feature: "주행 중 터치 제한", web: "deriveDriveMode + 오버레이", pleos: "CarUxRestrictionsManager.registerListener(onUxRestrictionsChanged) + DO 선언", permission: "AAOS 표준", status: "AAOS 표준" },
   { feature: "운전자 안내 음성", web: "브라우저 speechSynthesis (ko-KR) + 자막", pleos: "TextToSpeech SDK v3.3.1 (HYBRID/SERVER/ON_DEVICE)", permission: "Playground 앱 등록 (서버 모드)", status: "준비 중" },
@@ -35,6 +36,7 @@ export const MAPPING: MappingRow[] = [
 
 export const STATUS_COLOR: Record<SdkStatus, string> = {
   "사용 가능": "var(--ok)",
+  "가이드 공개": "#e6d38a",
   "준비 중": "#c8b6ff",
   "AAOS 표준": "#9fd3ff",
   가정: "var(--warn)",

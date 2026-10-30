@@ -141,13 +141,15 @@ function DrivingPane({ s }: { s: EngineState }) {
   }
   const delay = predictDelayMin(app.trip.etaMin, job.promisedMin);
   const dColor = delay >= 10 ? "var(--danger)" : delay > 0 ? "var(--warn)" : "var(--ok)";
+  // 화면에 찍힌 두 시각(분 단위 내림)의 차이로 보여 줘야 「11:34 · 11:00 (+34분)」처럼 산수가 맞는다
+  const shown = Math.floor(app.trip.etaMin + 1e-9) - Math.floor(job.promisedMin + 1e-9);
   return (
     <div className="flex h-full flex-col p-[2.2cqw]">
       <div className="cq-sm text-muted">다음 방문</div>
       <div className="cq-2xl mt-[0.3cqw] font-extrabold">{job.customerAlias} 고객</div>
       <div className="cq-xl mt-[0.6cqw] font-bold tabular-nums">
         도착 {fmtHHMM(app.trip.etaMin)} · 약속 {fmtHHMM(job.promisedMin)}{" "}
-        <span style={{ color: dColor }}>({delay > 0 ? `+${delay}분` : delay === 0 ? "정시" : `−${-delay}분`})</span>
+        <span style={{ color: dColor }}>({shown > 0 ? `+${shown}분` : shown === 0 ? "정시" : `−${-shown}분`})</span>
       </div>
       {line && (
         <div className="cq-md mt-[1.4cqw] inline-flex max-w-full self-start rounded-full border px-[1.2cqw] py-[0.4cqw] font-bold" style={{ color: TONE[line.tone], borderColor: TONE[line.tone] }}>

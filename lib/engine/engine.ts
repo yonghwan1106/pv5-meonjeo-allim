@@ -39,6 +39,7 @@ export function initialJobs(): Job[] {
     token: j.token,
     status: "SCHEDULED",
     etaMin: null,
+    notifiedEtaMin: null,
     arrivedAt: null,
     workStartedAt: null,
     departedAt: null,
@@ -503,6 +504,7 @@ export class DemoEngine {
       j.departedAt = j.workStartedAt + j.estWorkMin;
       j.status = "DONE";
       j.etaMin = null;
+      j.notifiedEtaMin = null;
       t = j.departedAt;
       at = j.nodeId;
       sv.timeline.push({ id: ++this.s.seq, tSec: t * 60, jobId: j.id, kind: "DONE", text: `${j.customerAlias} 작업 완료 (빨리 감기)` });

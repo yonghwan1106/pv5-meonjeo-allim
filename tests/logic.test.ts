@@ -223,7 +223,7 @@ describe("이동 시간표 · 정체 계수", () => {
 
 describe("개인정보 — 고객 화면 데이터", () => {
   it("위치(위·경도·지점 ID)를 담지 않고 도착 예정 범위만 준다", () => {
-    const job = { ...initialJobs()[1], status: "DELAY_NOTIFIED" as const, etaMin: parseHHMM("11:22") };
+    const job = { ...initialJobs()[1], status: "DELAY_NOTIFIED" as const, etaMin: parseHHMM("11:22"), notifiedEtaMin: parseHHMM("11:22") };
     const v = toCustomerView(job, blankSession(), [], parseHHMM("10:40"));
     const json = JSON.stringify(v);
     expect(json).not.toMatch(/lat|lng|latitude|longitude|nodeId|"x"|"y"/);

@@ -95,6 +95,7 @@ export class MockServer implements ServerPort {
     const notice = this.notify(jobId, "DELAY", body, approvedBy);
     j.status = nextJobStatus(j.status, "DELAY_NOTIFIED");
     j.etaMin = etaMin;
+    j.notifiedEtaMin = etaMin;
     this.session(jobId).pending = { kind: "DELAY", noticeId: notice.id };
     this.s.stats.delayNotices++;
     this.s.stats.maxDelayMin = Math.max(this.s.stats.maxDelayMin, n);
@@ -111,6 +112,7 @@ export class MockServer implements ServerPort {
     const body = `약 ${remainMin}분 뒤(${fmtWindow(etaMin)}) 도착해요. 지금 집에 계세요? 이 차는 높이 ${heightLabel(day.driver.heightMm)}(PV5)예요.`;
     const notice = this.notify(jobId, "PRE_ARRIVAL_CHECK", body, "AUTO");
     j.etaMin = etaMin;
+    j.notifiedEtaMin = etaMin;
     this.session(jobId).pending = { kind: "PRE_ARRIVAL", noticeId: notice.id };
     this.timeline(jobId, "PRE_ARRIVAL", `${j.customerAlias} 고객님께 도착 ${remainMin}분 전 확인`);
   }
@@ -120,6 +122,7 @@ export class MockServer implements ServerPort {
     j.status = nextJobStatus(j.status, "ARRIVED_AND_PARKED");
     j.arrivedAt = atMin;
     j.etaMin = null;
+    j.notifiedEtaMin = null;
     this.s.order = this.s.order.filter((id) => id !== jobId);
     this.notify(jobId, "ARRIVED", `기사님이 ${placeLabel ? placeLabel + "에 " : ""}도착했어요 (${fmtHHMM(atMin)}).`, "AUTO");
     this.session(jobId).pending = null;
@@ -147,6 +150,7 @@ export class MockServer implements ServerPort {
     const j = this.job(jobId);
     const mins = Math.max(1, Math.round(etaMin - this.h.nowMin()));
     j.etaMin = etaMin;
+    j.notifiedEtaMin = etaMin;
     this.notify(jobId, "DEPARTED_TO_YOU", `기사님이 출발했어요. 약 ${mins}분 뒤, ${fmtWindow(etaMin)} 사이 도착 예정이에요.`, "AUTO");
     this.timeline(jobId, "DEPART", `${j.customerAlias} 고객님께 「출발했어요」 (약 ${mins}분)`);
   }
@@ -186,6 +190,7 @@ export class MockServer implements ServerPort {
     this.h.push({ kind: "REPLY", jobId, reply });
 
     if (reply === "OK_EARLIER") {
+      j.notifiedEtaMin = j.promisedMin;
       this.notify(jobId, "RESCHEDULE_DONE", `고마워요. ${fmtWindow(j.promisedMin)} 사이에 갈게요.`, "AUTO");
     }
     if (["POSTPONE_30", "POSTPONE_60", "HOME_LATER_30"].includes(reply)) {
@@ -223,6 +228,7 @@ export class MockServer implements ServerPort {
         `앞 일정이 바뀌어 더 일찍 갈 수 있어요. 원래 ${fmtHHMM(oj.promisedMin)} 약속인데 ${fmtWindow(r.offer.etaMin)} 사이 도착 가능해요. 괜찮으세요?`,
         "AUTO",
       );
+      oj.notifiedEtaMin = r.offer.etaMin;
       this.session(oj.id).pending = { kind: "EARLIER_OFFER", noticeId: notice.id, offerEtaMin: r.offer.etaMin };
       offerJobId = oj.id;
     }

@@ -14,34 +14,44 @@ export function FlowDiagram() {
       ))}
     </g>
   );
-  const arrow = (x1: number, y1: number, x2: number, y2: number, label: string, color = "#7cc4d6", dy = -8) => (
+  // 라벨은 화살표 위(위쪽 화살표) 또는 아래(아래쪽 화살표)에 1~2줄로, 상자와 겹치지 않게 간격 130px 안에 둔다
+  const arrow = (x1: number, y1: number, x2: number, y2: number, label: string[], color = "#7cc4d6", below = false) => (
     <g>
       <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="2.2" markerEnd="url(#ah)" />
-      <text x={(x1 + x2) / 2} y={(y1 + y2) / 2 + dy} fontSize="12" textAnchor="middle" fill={color}>
-        {label}
-      </text>
+      {label.map((l, i) => (
+        <text
+          key={i}
+          x={(x1 + x2) / 2}
+          y={below ? y1 + 17 + i * 15 : y1 - 8 - (label.length - 1 - i) * 15}
+          fontSize="12"
+          textAnchor="middle"
+          fill={color}
+        >
+          {l}
+        </text>
+      ))}
     </g>
   );
   return (
-    <svg viewBox="0 0 1100 470" className="w-full" role="img" aria-label="데이터 흐름: 차량 → 차량 앱 → 서버 → 고객·업체">
+    <svg viewBox="0 0 1280 470" className="w-full" role="img" aria-label="데이터 흐름: 차량 → 차량 앱 → 서버 → 고객·업체">
       <defs>
         <marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
           <path d="M0,0 L9,4.5 L0,9 z" fill="#9aa3ad" />
         </marker>
       </defs>
       {box(20, 30, 250, 200, "PV5 차량 (AAOS)", ["AAOS Car API: GEAR_SELECTION·", "  PERF_VEHICLE_SPEED", "Vehicle SDK: Door(REAR)·SOC", "NaviHelper: TripInfo·도착 이벤트", "Gleo AI (음성, OS 상위 레이어)", "Vehicle State·NaviHelper = 바로 사용"], "#9fd3ff")}
-      {box(330, 30, 250, 200, "먼저 알림 차량 앱", ["판단 = lib/logic 순수 함수", "predictDelayMin·shouldAskDelay", "shouldPreArrivalCheck·predictOverrun", "주행 3단 UX (P에서만 터치)", "SMS·전화 직접 안 씀", "(Pleos: 차량 Telephony·SMS 제한)"], "#7cc4d6")}
-      {box(640, 30, 220, 200, "우리 서버", ["발송 대행 (알림톡 — 모의)", "replan(): 오늘 순서 다시 짜기", "사건 기록: 도착·작업·출발", "1회용 고객 링크 발급", "위치 궤적 저장 안 함", "보관 90일 후 삭제 [가정]"], "#f2b75b")}
-      {box(900, 20, 180, 120, "고객 휴대폰", ["/c/[token] 1회용 링크", "도착 예정 범위만", "지도·위치 없음"], "#ff9fb2")}
-      {box(900, 160, 180, 110, "업체 관제", ["/ops 타임라인", "발송 문구·응답 기록"], "#ff9fb2")}
-      {box(330, 300, 530, 140, "시제품에서는 (이 웹 데모)", ["모의 SDK(lib/pleos/mock) = Virtual Console 흉내 시뮬레이터가 값을 바꿈", "모의 서버(lib/engine/server) = 같은 브라우저 메모리, 탭 간 BroadcastChannel", "실서비스: Kotlin 앱 + HTTPS API + 서버 푸시 (lib/pleos/*.ts 인터페이스는 그대로)"], "#3a4550")}
-      {arrow(270, 90, 330, 90, "신호·이벤트")}
-      {arrow(330, 160, 270, 160, "requestRoute · Gleo 회신", "#8fe0a8", 18)}
-      {arrow(580, 90, 640, 90, "ETA(분)·사건만")}
-      {arrow(640, 160, 580, 160, "서버 푸시: 고객 답·새 순서", "#f2b75b", 18)}
-      {arrow(860, 70, 900, 70, "알림톡", "#ff9fb2")}
-      {arrow(900, 115, 860, 115, "답 3버튼", "#ff9fb2", 16)}
-      {arrow(860, 210, 900, 210, "기록", "#ff9fb2")}
+      {box(400, 30, 260, 200, "먼저 알림 차량 앱", ["판단 = lib/logic 순수 함수", "predictDelayMin·shouldAskDelay", "shouldPreArrivalCheck·predictOverrun", "주행 3단 UX (P에서만 터치)", "SMS·전화 직접 안 씀", "(Pleos: 차량 Telephony·SMS 제한)"], "#7cc4d6")}
+      {box(790, 30, 230, 200, "우리 서버", ["발송 대행 (알림톡 — 모의)", "replan(): 오늘 순서 다시 짜기", "사건 기록: 도착·작업·출발", "1회용 고객 링크 발급", "위치 궤적 저장 안 함", "보관 90일 후 삭제 [가정]"], "#f2b75b")}
+      {box(1090, 20, 180, 120, "고객 휴대폰", ["/c/[token] 1회용 링크", "도착 예정 범위만", "지도·위치 없음"], "#ff9fb2")}
+      {box(1090, 160, 180, 110, "업체 관제", ["/ops 타임라인", "발송 문구·응답 기록"], "#ff9fb2")}
+      {box(400, 300, 620, 140, "시제품에서는 (이 웹 데모)", ["모의 SDK(lib/pleos/mock) = Virtual Console 흉내 시뮬레이터가 값을 바꿈", "모의 서버(lib/engine/server) = 같은 브라우저 메모리, 탭 간 BroadcastChannel", "실서비스: Kotlin 앱 + HTTPS API + 서버 푸시 (lib/pleos/*.ts 인터페이스는 그대로)"], "#3a4550")}
+      {arrow(270, 90, 400, 90, ["신호·이벤트"])}
+      {arrow(400, 160, 270, 160, ["requestRoute", "Gleo 회신"], "#8fe0a8", true)}
+      {arrow(660, 90, 790, 90, ["ETA(분)·사건만"])}
+      {arrow(790, 160, 660, 160, ["서버 푸시:", "고객 답·새 순서"], "#f2b75b", true)}
+      {arrow(1020, 60, 1090, 60, ["알림톡"], "#ff9fb2")}
+      {arrow(1090, 115, 1020, 115, ["답 3버튼"], "#ff9fb2", true)}
+      {arrow(1020, 215, 1090, 215, ["기록"], "#ff9fb2")}
     </svg>
   );
 }

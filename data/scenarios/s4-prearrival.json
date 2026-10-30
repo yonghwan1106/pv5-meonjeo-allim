@@ -21,7 +21,7 @@
       "actions": [],
       "caption": {
         "title": "정○○ 고객(푸른숲 아파트 [가상])에게 가는 중 (13:06)",
-        "signal": "기어 D · 50km/h · 남은 약 9km",
+        "signal": "기어 D · 50km/h · 남은 약 10km",
         "decision": "남은 시간 > 10분 → 아직 묻지 않음",
         "driver": "「다음 정○○ · 도착 13:30」",
         "companion": "정○○: 「기사님이 출발했어요」"
@@ -30,13 +30,13 @@
     {
       "t": 20,
       "hold": 5500,
-      "actions": [{ "type": "navi.remainKm", "km": 3 }],
+      "actions": [{ "type": "clock.advanceTo", "hhmm": "13:21" }],
       "caption": {
-        "title": "남은 3km — 도착 약 7분 전",
-        "signal": "onDestinationInfo remainDistance 3.0km · remainTime 7분",
+        "title": "(시간 건너뛰기 13:21) 남은 10분 — 도착 10분 전",
+        "signal": "onDestinationInfo remainTime 10분 · remainDistance 약 3.9km",
         "decision": "shouldPreArrivalCheck: 10분(또는 3km) 이하 → 서버가 「집에 계세요?」 발송",
         "driver": "칩 「도착 전 확인 보냄」 — 운전자는 할 일 없음",
-        "companion": "정○○: 「약 7분 뒤 도착해요. 지금 집에 계세요?」 + 주차 안내 (차 높이 1.9m → 2.1m 지하주차장 가능)"
+        "companion": "정○○: 「약 10분 뒤 도착해요. 지금 집에 계세요?」 + 주차 안내 (차 높이 1.9m → 2.1m 지하주차장 가능)"
       }
     },
     {
@@ -78,9 +78,9 @@
     {
       "t": 80,
       "hold": 3500,
-      "actions": [{ "type": "navi.arrive" }],
+      "actions": [{ "type": "clock.advanceTo", "hhmm": "13:30" }, { "type": "navi.arrive" }],
       "caption": {
-        "title": "주차장 입구 도착",
+        "title": "(13:30) 주차장 입구 도착",
         "signal": "onDestinationArrived() · 차속 0",
         "decision": "기어 P를 기다림",
         "driver": "칩 「목적지 도착 — 기어 P에서 도착 알림」",
